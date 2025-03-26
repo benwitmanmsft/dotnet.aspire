@@ -50,14 +50,16 @@
                             CopyNewConfigurationSchema;
                             CompareConfigurationSchema" />
 
-  <Target Name="WriteConfigurationSchemaGeneratorRspFile">
-    <PropertyGroup>
+  <Target Name="WriteConfigurationSchemaGeneratorRspFile" 
+    DependsOnTargets="FindReferenceAssembliesForReferences"
+    Deferred="Item:ReferencePathWithRefAssemblies;Item:IntermediateAssembly:$;Property:GeneratedConfigurationSchemaOutputPath:$;Item:ConfigSchemaGenArg">
+    <PropertyGroup PrecomputationMode="Deferred">
       <ConfigSchemaInput>"@(IntermediateAssembly)"</ConfigSchemaInput>
       <ConfigSchemaReferences>"@(ReferencePathWithRefAssemblies, '" "')"</ConfigSchemaReferences>
       <ConfigSchemaOutput>"$(GeneratedConfigurationSchemaOutputPath)"</ConfigSchemaOutput>
     </PropertyGroup>
 
-    <ItemGroup>
+    <ItemGroup PrecomputationMode="Deferred">
       <ConfigSchemaGenArg Include="--input $(ConfigSchemaInput)" />
       <ConfigSchemaGenArg Include="--reference $(ConfigSchemaReferences)" />
       <ConfigSchemaGenArg Include="--output $(ConfigSchemaOutput)" />
@@ -75,24 +77,33 @@
              RemoveProperties="TargetFramework">
       <Output TaskParameter="TargetOutputs" PropertyName="ConfigurationSchemaGeneratorPath" />
     </MSBuild>
+    <PropertyGroup>
+      <ConfigurationSchemaGeneratorDep Condition="'$(IsPrecomputePhase)' == 'false'">$(ConfigurationSchemaGeneratorPath)</ConfigurationSchemaGeneratorDep>
+      <ConfigurationSchemaGeneratorDep Condition="'$(IsPrecomputePhase)' == 'true'">$([System.IO.Path]::GetDirectoryName($(ConfigurationSchemaGeneratorPath)))\#dir</ConfigurationSchemaGeneratorDep>
+    </PropertyGroup>
   </Target>
 
   <Target Name="CoreGenerateConfigurationSchema"
           DependsOnTargets="WriteConfigurationSchemaGeneratorRspFile;
                             CalculateConfigurationSchemaGeneratorPath"
-          Inputs="$(ConfigurationSchemaGeneratorPath);
+          Inputs="$(ConfigurationSchemaGeneratorDep);
                   @(IntermediateAssembly);
-                  @(ReferencePathWithRefAssemblies)"
+                  @(IntermediateAssembly->'%(RootDir)%(Directory)%(Filename).xml');
+                  @(ReferencePathPrecomputeInputs)"
           Outputs="$(GeneratedConfigurationSchemaOutputPath)">
-    <PropertyGroup>
+    
+    <ItemGroup>
+      <DotNetToolDependencies Include="$(DotNetRoot)**" />
+    </ItemGroup>
 
+    <PropertyGroup>
       <GeneratorCommandLine>"$(DotNetTool)" exec "$(ConfigurationSchemaGeneratorPath)"</GeneratorCommandLine>
       <GeneratorCommandLine>$(GeneratorCommandLine) @"$(ConfigurationSchemaGeneratorRspPath)"</GeneratorCommandLine>
     </PropertyGroup>
 
-    <Exec Command="$(GeneratorCommandLine)" />
+    <Exec Command="$(GeneratorCommandLine)" PrecomputeInputs="@(DotNetToolDependencies)" />
 
-    <ItemGroup>
+    <ItemGroup PrecomputationMode="Skip">
       <FileWrites Include="$(GeneratedConfigurationSchemaOutputPath)" Condition="Exists('$(GeneratedConfigurationSchemaOutputPath)')"/>
     </ItemGroup>
   </Target>

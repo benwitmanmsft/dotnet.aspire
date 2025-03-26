@@ -33,6 +33,15 @@
 
     <DashboardPublishedArtifactsOutputDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'DashboardArtifacts', '$(Configuration)'))</DashboardPublishedArtifactsOutputDir>
     <WorkloadsPackageSource>$(ArtifactsShippingPackagesDir)</WorkloadsPackageSource>
+    
+    <ArtifactsRestoreDir>$([MSBuild]::NormalizeDirectory('$(ArtifactsDir)', 'restore'))</ArtifactsRestoreDir>
+    <RestoreOutputPath Condition="'$(RestoreOutputPath)' == ''">$([System.IO.Path]::GetFullPath('$(ArtifactsRestoreDir)$(OutDirName)\'))</RestoreOutputPath>
+    <MSBuildProjectExtensionsPath>$(RestoreOutputPath)</MSBuildProjectExtensionsPath>
+    <ProjectAssetsFile>$(RestoreOutputPath)project.assets.json</ProjectAssetsFile>
+
+    <ResolveAssemblyReferenceDisableStateFile>true</ResolveAssemblyReferenceDisableStateFile>
+    <UseSharedCompilation>false</UseSharedCompilation>
+    <SuppressImplicitGitSourceLink>true</SuppressImplicitGitSourceLink>
   </PropertyGroup>
 
   <!-- OS/Architecture properties for local development resources -->
