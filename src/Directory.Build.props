@@ -11,5 +11,32 @@
     <PackageReference Include="Microsoft.DotNet.GenAPI.Task" PrivateAssets="All" />
   </ItemGroup>
 
+  <UsingTaskPrecomputationMode TaskName="UpdateXlf" TaskMode="Dynamic" />
+  <UsingTaskPrecomputationMode TaskName="GatherXlf" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="GatherTranslatedSource" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="UpdatePackageStaticWebAssets" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="DiscoverDefaultScopedCssItems" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="TranslateSource" TaskMode="Dynamic" />
+  <UsingTaskPrecomputationMode TaskName="DefineStaticWebAssets" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="DefineStaticWebAssetEndpoints" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="UpdateStaticWebAssetEndpoints" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="FilterStaticWebAssetEndpoints" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ResolveAllScopedCssAssets" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="DiscoverPrecompressedAssets" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ResolveCompressedAssets" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ResolveStaticWebAssetEndpointRoutes" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="GenerateJsModuleManifest" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ApplyCssScopes" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ComputeCssScope" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="EncodeRazorInputItem" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoToolsPlatform" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoCompilerOutputs" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoReadDependencies" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="MergeConfigurationProperties" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ApplyJsModules" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoCompile" TaskMode="Dynamic" />
+  <UsingTaskPrecomputationMode TaskName="ApplyCompressionNegotiation" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="CollectStaticWebAssetsToCopy" TaskMode="Static" />
+
   <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 </Project>
