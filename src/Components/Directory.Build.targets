@@ -52,17 +52,17 @@
 
   <Target Name="WriteConfigurationSchemaGeneratorRspFile" 
     DependsOnTargets="FindReferenceAssembliesForReferences"
-    Deferred="Item:ReferencePathWithRefAssemblies;Item:IntermediateAssembly:$;Property:GeneratedConfigurationSchemaOutputPath:$;Item:ConfigSchemaGenArg">
-    <PropertyGroup PrecomputationMode="Deferred">
-      <ConfigSchemaInput>"@(IntermediateAssembly)"</ConfigSchemaInput>
-      <ConfigSchemaReferences>"@(ReferencePathWithRefAssemblies, '" "')"</ConfigSchemaReferences>
-      <ConfigSchemaOutput>"$(GeneratedConfigurationSchemaOutputPath)"</ConfigSchemaOutput>
+    Deferred="Item:ReferencePathWithRefAssemblies:r;Item:IntermediateAssembly:r;Property:GeneratedConfigurationSchemaOutputPath:r;Item:ConfigSchemaGenArg:w;Property:ConfigSchemaInput:w;Property:ConfigSchemaReferences:w;Property:ConfigSchemaOutput:w">
+    <PropertyGroup>
+      <ConfigSchemaInput Deferred="true">"@(IntermediateAssembly)"</ConfigSchemaInput>
+      <ConfigSchemaReferences Deferred="true">"@(ReferencePathWithRefAssemblies, '" "')"</ConfigSchemaReferences>
+      <ConfigSchemaOutput Deferred="true">"$(GeneratedConfigurationSchemaOutputPath)"</ConfigSchemaOutput>
     </PropertyGroup>
 
-    <ItemGroup PrecomputationMode="Deferred">
-      <ConfigSchemaGenArg Include="--input $(ConfigSchemaInput)" />
-      <ConfigSchemaGenArg Include="--reference $(ConfigSchemaReferences)" />
-      <ConfigSchemaGenArg Include="--output $(ConfigSchemaOutput)" />
+    <ItemGroup>
+      <ConfigSchemaGenArg Deferred="true" Include="--input $(ConfigSchemaInput)" />
+      <ConfigSchemaGenArg Deferred="true" Include="--reference $(ConfigSchemaReferences)" />
+      <ConfigSchemaGenArg Deferred="true" Include="--output $(ConfigSchemaOutput)" />
     </ItemGroup>
 
     <WriteLinesToFile File="$(ConfigurationSchemaGeneratorRspPath)"
@@ -103,7 +103,7 @@
 
     <Exec Command="$(GeneratorCommandLine)" PrecomputeInputs="@(DotNetToolDependencies)" />
 
-    <ItemGroup PrecomputationMode="Skip">
+    <ItemGroup Condition="'$(IsPrecomputePhase)' != 'true'">
       <FileWrites Include="$(GeneratedConfigurationSchemaOutputPath)" Condition="Exists('$(GeneratedConfigurationSchemaOutputPath)')"/>
     </ItemGroup>
   </Target>

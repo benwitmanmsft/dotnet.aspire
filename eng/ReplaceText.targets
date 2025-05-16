@@ -1,7 +1,8 @@
 <Project>
   <UsingTask TaskName="ReplaceText"
       TaskFactory="RoslynCodeTaskFactory"
-      AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+      AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
+      PrecomputationMode="Dynamic">
     <ParameterGroup>
       <Input ParameterType="System.String" Required="true" />
       <Output ParameterType="System.String" Required="true" />

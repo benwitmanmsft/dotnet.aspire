@@ -32,26 +32,35 @@
 
   <Target Name="Build" />
 
+  <Target Name="BeforeBuildGetPublishItemsDirectory">
+    <PropertyGroup>
+      <_PublishItemsDirectory>$(DotNetOutputPath)Aspire.Dashboard/$(DashboardRuntime)/$(Configuration)/$(TargetFramework)/$(DashboardRuntime)/publish</_PublishItemsDirectory>
+    </PropertyGroup>
+  </Target>
 
-  <Target Name="BeforeBuild" BeforeTargets="Build">
+  <Target Name="BeforeBuild" DependsOnTargets="BeforeBuildGetPublishItemsDirectory" BeforeTargets="Build" Deferred="Property:_PublishItemsDirectory:r">
     <MSBuild Projects="../../src/Aspire.Dashboard/Aspire.Dashboard.csproj" Targets="publish"
-      Properties="Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(TargetFramework);RuntimeIdentifier=$(DashboardRuntime);PlatformName=$(DashboardRuntime)" />
+      Properties="Configuration=$(Configuration);Platform=$(Platform);TargetFramework=$(TargetFramework);RuntimeIdentifier=$(DashboardRuntime);PlatformName=$(DashboardRuntime)"
+       />
 
     <!-- After publishing the project, we ensure that the published assets get packed in the nuspec. -->
     <ItemGroup>
-      <_PublishItems
-        Include="$(DotNetOutputPath)Aspire.Dashboard/$(DashboardRuntime)/$(Configuration)/$(TargetFramework)/$(DashboardRuntime)/publish/**/*" />
-      <None Include="@(_PublishItems)" Pack="true" PackagePath="tools/" />
+      <None Include="$(_PublishItemsDirectory)" Pack="true" PackagePath="tools/" PackType="Directory" />
     </ItemGroup>
 
     <MakeDir Directories="$(DashboardPublishedArtifactsOutputDir)/$(DashboardRuntime)" />
     <ZipDirectory
-      SourceDirectory="$(DotNetOutputPath)Aspire.Dashboard/$(DashboardRuntime)/$(Configuration)/$(TargetFramework)/$(DashboardRuntime)/publish"
+      PrecomputeInputs="$(_PublishItemsDirectory)"
+      SourceDirectory="$(_PublishItemsDirectory)"
       DestinationFile="$(DashboardPublishedArtifactsOutputDir)/$(DashboardRuntime)/aspire-dashboard-$(DashboardRuntime).zip"
       Overwrite="true" />
 
+    <ItemGroup>
+      <_PublishItems Deferred="true" Include="$(_PublishItemsDirectory)/**/*" />
+    </ItemGroup>
+
     <!-- Throw an error if _PublishItems is empty. -->
-    <Error Condition="'@(_PublishItems)' == ''"
+    <Error PrecomputationMode="Dynamic" DeferredCondition="'@(_PublishItems)' == ''"
       Text="No files were found to pack. Ensure that the project being packed has a publish target defined." />
   </Target>
 
