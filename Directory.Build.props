@@ -59,4 +59,19 @@
     <AspireDashboardDir>$(MSBuildThisFileDirectory)/artifacts/bin/Aspire.Dashboard/$(Configuration)/net8.0/</AspireDashboardDir>
   </PropertyGroup>
 
+  <UsingTaskPrecomputationMode TaskName="UpdateXlf" TaskMode="Dynamic" />
+  <UsingTaskPrecomputationMode TaskName="GatherXlf" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="GatherTranslatedSource" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="UpdatePackageStaticWebAssets" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="DiscoverDefaultScopedCssItems" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="TranslateSource" TaskMode="Dynamic" />
+  <UsingTaskPrecomputationMode TaskName="ApplyCssScopes" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ComputeCssScope" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="EncodeRazorInputItem" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoToolsPlatform" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoCompilerOutputs" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoReadDependencies" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="MergeConfigurationProperties" TaskMode="Static" />
+  <UsingTaskPrecomputationMode TaskName="ProtoCompile" TaskMode="Dynamic" />
+
 </Project>
