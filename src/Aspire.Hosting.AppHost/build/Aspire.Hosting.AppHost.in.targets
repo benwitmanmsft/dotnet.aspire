@@ -176,9 +176,13 @@ namespace Projects%3B
       <Output TaskParameter="NonExecutableReferences" ItemName="_AspireNonExecutableProjectResource" />
     </GetNonExecutableReferences>
 
+    <ItemGroup>
+      <_AspireNonExecutableProjectResourceWarnings Deferred="true" Include="@(_AspireNonExecutableProjectResource->'%(OriginalItemSpec)')" />
+    </ItemGroup>
+
     <Warning Code="ASPIRE004"
-             Condition="'@(_AspireNonExecutableProjectResource)' != ''"
-             Text="'%(_AspireNonExecutableProjectResource.OriginalItemSpec)' is referenced by an Aspire Host project, but it is not an executable. Did you mean to set IsAspireProjectResource=&quot;false&quot;?" />
+             DeferredCondition="'@(_AspireNonExecutableProjectResourceWarnings)' != ''"
+             Text="'@(_AspireNonExecutableProjectResourceWarnings)' is referenced by an Aspire Host project, but it is not an executable. Did you mean to set IsAspireProjectResource=&quot;false&quot;?" />
   </Target>
 
   <PropertyGroup>
