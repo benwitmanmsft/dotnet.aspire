@@ -90,7 +90,8 @@
                   @(IntermediateAssembly);
                   @(IntermediateAssembly->'%(RootDir)%(Directory)%(Filename).xml');
                   @(ReferencePathPrecomputeInputs)"
-          Outputs="$(GeneratedConfigurationSchemaOutputPath)">
+          Outputs="$(GeneratedConfigurationSchemaOutputPath)"
+          Deferred="Property:GeneratedConfigurationSchemaOutputPath:r">
     
     <ItemGroup>
       <DotNetToolDependencies Include="$(DotNetRoot)**" />
@@ -102,6 +103,8 @@
     </PropertyGroup>
 
     <Exec Command="$(GeneratorCommandLine)" PrecomputeInputs="@(DotNetToolDependencies)" />
+
+    <WriteLinesToFile File="$(GeneratedConfigurationSchemaOutputPath)" Lines="{}" DeferredCondition="!Exists('$(GeneratedConfigurationSchemaOutputPath)')" />
 
     <ItemGroup Condition="'$(IsPrecomputePhase)' != 'true'">
       <FileWrites Include="$(GeneratedConfigurationSchemaOutputPath)" Condition="Exists('$(GeneratedConfigurationSchemaOutputPath)')"/>
