@@ -11,12 +11,24 @@
     <PackageReference Include="Microsoft.Playwright" />
   </ItemGroup>
 
-  <Target Name="ProvisionBrowsersForPlaywright" AfterTargets="Build" Condition="'$(InstallBrowsersForPlaywright)' == 'true' and @(BrowsersForPlaywrightToInstall->Count()) > 0">
+  <Target Name="SetMicrosoftPlaywrightDllPath">
     <PropertyGroup>
       <_MicrosoftPlaywrightDllPath>$(OutputPath)/Microsoft.Playwright.dll</_MicrosoftPlaywrightDllPath>
     </PropertyGroup>
+  </Target>
 
-    <Error Condition="!Exists('$(_MicrosoftPlaywrightDllPath)')"
+  <Target
+      Name="ProvisionBrowsersForPlaywright"
+      DependsOnTargets="SetMicrosoftPlaywrightDllPath"
+      AfterTargets="Build" 
+      Condition="'$(InstallBrowsersForPlaywright)' == 'true' and @(BrowsersForPlaywrightToInstall->Count()) > 0 and '$(TargetFramework)' != ''"
+      Deferred="Property:_MicrosoftPlaywrightDllPath:r">
+
+    <ItemGroup>
+      <DotNetToolDependencies Include="$(DotNetRoot)**" />
+    </ItemGroup>
+
+    <Error PrecomputeInputs="$(_MicrosoftPlaywrightDllPath)" PrecomputationMode="Dynamic" DeferredCondition="!Exists('$(_MicrosoftPlaywrightDllPath)')"
            Text="Could not find %24(_MicrosoftPlaywrightDllPath)=$(_MicrosoftPlaywrightDllPath). This expects the project to reference the Microsoft.Playwright nuget." />
 
     <ItemGroup>
@@ -24,7 +36,9 @@
       <_EnvVarsForPlaywrightInstall Condition="'$(ContinuousIntegrationBuild)' == 'true'" Include="PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true" />
     </ItemGroup>
 
-    <Exec Command="dotnet exec --runtimeconfig $(MSBuildThisFileDirectory)Microsoft.Playwright.runtimeconfig.json $(_MicrosoftPlaywrightDllPath) install @(BrowsersForPlaywrightToInstall, ' ')"
+    <Exec PrecomputeInputs="@(DotNetToolDependencies)"
+          PrecomputeOutputs="$(PlaywrightDependenciesDirectory)#dir"
+          Command="$(DotNetTool) exec --runtimeconfig $(MSBuildThisFileDirectory)Microsoft.Playwright.runtimeconfig.json $(_MicrosoftPlaywrightDllPath) install @(BrowsersForPlaywrightToInstall, ' ')"
           EnvironmentVariables="@(_EnvVarsForPlaywrightInstall)" />
   </Target>
 </Project>
