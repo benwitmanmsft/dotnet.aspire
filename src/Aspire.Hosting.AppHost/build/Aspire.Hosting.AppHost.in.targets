@@ -180,7 +180,9 @@ namespace Projects%3B
       <_AspireNonExecutableProjectResourceWarnings Deferred="true" Include="@(_AspireNonExecutableProjectResource->'%(OriginalItemSpec)')" />
     </ItemGroup>
 
-    <Warning Code="ASPIRE004"
+    <Warning 
+             Code="ASPIRE004"
+             PrecomputationMode="Dynamic"
              DeferredCondition="'@(_AspireNonExecutableProjectResourceWarnings)' != ''"
              Text="'@(_AspireNonExecutableProjectResourceWarnings)' is referenced by an Aspire Host project, but it is not an executable. Did you mean to set IsAspireProjectResource=&quot;false&quot;?" />
   </Target>
