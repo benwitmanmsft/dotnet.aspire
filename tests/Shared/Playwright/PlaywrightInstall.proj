@@ -1,0 +1,45 @@
+<Project Sdk="Microsoft.Build.NoTargets">
+  <!--
+    Set $(InstallBrowsersForPlaywright) to 'true' to install browsers for Playwright.
+    @(BrowserForPlaywrightToInstall) is a list of browsers to install, defaulting to only `chromium`.
+  -->
+  <PropertyGroup>
+    <TargetFramework>$(DefaultTargetFramework)</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <BrowsersForPlaywrightToInstall Include="chromium" />
+    <PackageReference Include="Microsoft.Playwright" />
+  </ItemGroup>
+
+  <Target Name="SetMicrosoftPlaywrightDllPath">
+    <PropertyGroup>
+      <_MicrosoftPlaywrightDllPath>$(NuGetPackageRoot)\microsoft.playwright\1.49.0\lib\netstandard2.0\Microsoft.Playwright.dll</_MicrosoftPlaywrightDllPath>
+    </PropertyGroup>
+  </Target>
+
+  <Target
+      Name="ProvisionBrowsersForPlaywright"
+      DependsOnTargets="SetMicrosoftPlaywrightDllPath"
+      AfterTargets="Build" 
+      Condition="@(BrowsersForPlaywrightToInstall->Count()) > 0"
+      Deferred="Property:_MicrosoftPlaywrightDllPath:r">
+
+    <ItemGroup>
+      <DotNetToolDependencies Include="$(DotNetRoot)**" />
+    </ItemGroup>
+
+    <Error PrecomputeInputs="$(_MicrosoftPlaywrightDllPath)" PrecomputationMode="Dynamic" DeferredCondition="!Exists('$(_MicrosoftPlaywrightDllPath)')"
+           Text="Could not find %24(_MicrosoftPlaywrightDllPath)=$(_MicrosoftPlaywrightDllPath). This expects the project to reference the Microsoft.Playwright nuget." />
+
+    <ItemGroup>
+      <_EnvVarsForPlaywrightInstall Include="PLAYWRIGHT_BROWSERS_PATH=$(PlaywrightDependenciesDirectory)" />
+      <_EnvVarsForPlaywrightInstall Condition="'$(ContinuousIntegrationBuild)' == 'true'" Include="PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS=true" />
+    </ItemGroup>
+
+    <Exec PrecomputeInputs="@(DotNetToolDependencies);$(NuGetPackageRoot)\microsoft.playwright\1.49.0#dir"
+          PrecomputeOutputs="$(PlaywrightDependenciesDirectory)#dir"
+          Command="$(DotNetTool) exec --runtimeconfig $(MSBuildThisFileDirectory)Microsoft.Playwright.runtimeconfig.json $(_MicrosoftPlaywrightDllPath) install @(BrowsersForPlaywrightToInstall, ' ')"
+          EnvironmentVariables="@(_EnvVarsForPlaywrightInstall)" />
+  </Target>
+</Project>

@@ -5,6 +5,7 @@
     <ProjectToBuild Include="$(RepoRoot)eng\dashboardpack\**\*.csproj" />
     <ProjectToBuild Include="$(RepoRoot)playground\**\*.csproj" />
     <ProjectToBuild Include="$(RepoRoot)tests\**\*.csproj"  />
+    <ProjectToBuild Include="$(RepoRoot)tests\**\PlaywrightInstall.proj"  />
     <ProjectToBuild Remove="$(RepoRoot)playground\AzureFunctionsEndToEnd\**\*.csproj" />
   </ItemGroup>
 
