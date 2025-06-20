@@ -6,7 +6,9 @@
     <ProjectToBuild Include="$(RepoRoot)playground\**\*.csproj" />
     <ProjectToBuild Include="$(RepoRoot)tests\**\*.csproj"  />
     <ProjectToBuild Include="$(RepoRoot)tests\**\PlaywrightInstall.proj"  />
+    <!-- TODO: These are not precompute-compatible -->
     <ProjectToBuild Remove="$(RepoRoot)playground\AzureFunctionsEndToEnd\**\*.csproj" />
+    <ProjectToBuild Remove="$(RepoRoot)tests\Aspire.Playground.Tests\Aspire.Playground.Tests.csproj" />
   </ItemGroup>
 
   <!-- When building from source, we want to use the live repo contents as opposed to cloning the repo. -->
