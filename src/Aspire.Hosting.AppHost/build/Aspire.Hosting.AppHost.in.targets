@@ -117,7 +117,8 @@ namespace Projects%3B
   -->
   <UsingTask TaskName="GetNonExecutableReferences"
              TaskFactory="RoslynCodeTaskFactory"
-             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
+             PrecomputationMode="Static">
     <ParameterGroup>
       <AppProjectTargetFramework ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
       <NonExecutableReferences ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true" />
@@ -176,15 +177,9 @@ namespace Projects%3B
       <Output TaskParameter="NonExecutableReferences" ItemName="_AspireNonExecutableProjectResource" />
     </GetNonExecutableReferences>
 
-    <ItemGroup>
-      <_AspireNonExecutableProjectResourceWarnings Deferred="true" Include="@(_AspireNonExecutableProjectResource->'%(OriginalItemSpec)')" />
-    </ItemGroup>
-
-    <Warning 
-             Code="ASPIRE004"
-             PrecomputationMode="Dynamic"
-             DeferredCondition="'@(_AspireNonExecutableProjectResourceWarnings)' != ''"
-             Text="'@(_AspireNonExecutableProjectResourceWarnings)' is referenced by an Aspire Host project, but it is not an executable. Did you mean to set IsAspireProjectResource=&quot;false&quot;?" />
+    <Warning Code="ASPIRE004"
+             Condition="'@(_AspireNonExecutableProjectResource)' != ''"
+             Text="'%(_AspireNonExecutableProjectResource.OriginalItemSpec)' is referenced by an Aspire Host project, but it is not an executable. Did you mean to set IsAspireProjectResource=&quot;false&quot;?" />
   </Target>
 
   <PropertyGroup>
