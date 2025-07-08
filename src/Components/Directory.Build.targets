@@ -121,14 +121,15 @@
   </Target>
 
   <Target Name="CompareConfigurationSchema"
-          Condition="Exists('$(ConfigurationSchemaPath)') AND Exists('$(GeneratedConfigurationSchemaOutputPath)')">
+    PrecomputeInputs="$(ConfigurationSchemaPath);$(GeneratedConfigurationSchemaOutputPath)"
+    Deferred="Property:ConfigurationSchemaPath:r;Property:GeneratedConfigurationSchemaOutputPath:r">
 
     <PropertyGroup>
-      <CurrentConfigurationSchemaFileContent>$([System.IO.File]::ReadAllText('$(ConfigurationSchemaPath)'))</CurrentConfigurationSchemaFileContent>
-      <GeneratedConfigurationSchemaFileContent>$([System.IO.File]::ReadAllText('$(GeneratedConfigurationSchemaOutputPath)'))</GeneratedConfigurationSchemaFileContent>
+      <CurrentConfigurationSchemaFileContent Deferred="true">$([System.IO.File]::ReadAllText('$(ConfigurationSchemaPath)'))</CurrentConfigurationSchemaFileContent>
+      <GeneratedConfigurationSchemaFileContent Deferred="true">$([System.IO.File]::ReadAllText('$(GeneratedConfigurationSchemaOutputPath)'))</GeneratedConfigurationSchemaFileContent>
     </PropertyGroup>
 
-    <Error Condition="'$(CurrentConfigurationSchemaFileContent)' != '$(GeneratedConfigurationSchemaFileContent)'"
+    <Error PrecomputationMode="Dynamic" DeferredCondition="'$(CurrentConfigurationSchemaFileContent)' != '$(GeneratedConfigurationSchemaFileContent)'"
            Text="ConfigurationSchema.json is out of date for $(MSBuildProjectFile). Run 'dotnet build --no-incremental /p:UpdateConfigurationSchema=true' to update it." />
   </Target>
 
