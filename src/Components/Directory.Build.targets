@@ -103,10 +103,6 @@
     </PropertyGroup>
 
     <Exec Command="$(GeneratorCommandLine)" PrecomputeInputs="@(DotNetToolDependencies)" />
-
-    <Copy NoPredict="true" DeferredCondition="!Exists('$(GeneratedConfigurationSchemaOutputPath)') and Exists('$(ConfigurationSchemaPath)')"
-          SourceFiles="$(ConfigurationSchemaPath)"
-          DestinationFiles="$(GeneratedConfigurationSchemaOutputPath)" />
         
     <WriteLinesToFile File="$(GeneratedConfigurationSchemaOutputPath)" Lines="{}" DeferredCondition="!Exists('$(GeneratedConfigurationSchemaOutputPath)')" />
 
