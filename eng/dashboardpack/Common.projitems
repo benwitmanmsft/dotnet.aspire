@@ -50,7 +50,7 @@
 
     <MakeDir Directories="$(DashboardPublishedArtifactsOutputDir)/$(DashboardRuntime)" />
     <ZipDirectory
-      PrecomputeInputs="$(_PublishItemsDirectory)"
+      PrecomputeInputs="$(_PublishItemsDirectory)#dir"
       SourceDirectory="$(_PublishItemsDirectory)"
       DestinationFile="$(DashboardPublishedArtifactsOutputDir)/$(DashboardRuntime)/aspire-dashboard-$(DashboardRuntime).zip"
       Overwrite="true" />
